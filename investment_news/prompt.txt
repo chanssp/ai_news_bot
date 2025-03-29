@@ -1,0 +1,31 @@
+I want to get some data from the below url:
+@https://startuprecipe.co.kr/invest 
+
+The page has a <table id="example">, inside a <div class="dataTables_wrapper>.
+
+Below is the example of <tr>:
+<tr><td style="text-align: center;">2025-03-28</td><td style="text-align: center;">포도노스</td><td style="text-align: center;">음성 AI 분석 서비스</td><td style="text-align: center;">10억원</td><td style="text-align: center;">프리시드</td><td>카이스트청년창업투자지주, Serac 벤처스</td></tr>
+
+I want to get a list of object from the table in the format of:
+{ "date": `first <td> text`, "name": `second <td> text`, "domain": `third <td> text`, "amount": `fourth <td> text`, "stage": `fifth <td> text`, "houses": `sixth <td> text`}
+
+Some <td> might not have text, just leave it empty string.
+
+----------
+
+I made a function named `get_weekly_investments`.
+From the list given from above, make the function to get the "previous week's investment data".
+
+Make sure to have the "date" declared in the main function as a parameter.
+
+----------
+
+Now I want to send the list to slack using the credentials in the upper directory.
+In the `slack_sender` file, make two functions:
+- build_slack_block
+- send_to_slack
+
+I want the slack block to look like below:
+🚀 지난주 투자 유치 스타트업
+- `name`: `domain`, `amount`, `stage`, `houses`
+- ... for all the weekly list
