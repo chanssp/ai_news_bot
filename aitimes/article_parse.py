@@ -1,7 +1,7 @@
 import requests  # Library to make HTTP requests
 from bs4 import BeautifulSoup # Library to parse HTML
 import re
-from typing import Tuple, List, Optional
+from typing import Tuple, List
 
 def extract_article_paragraphs(url):
     """
