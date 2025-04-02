@@ -1,6 +1,7 @@
 from typing import List, Dict, Any
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
+from datetime import datetime
 
 def create_news_blocks(summary: str, news_items: List[str], article_url: str) -> List[Dict[str, Any]]:
     """
@@ -14,12 +15,13 @@ def create_news_blocks(summary: str, news_items: List[str], article_url: str) ->
     Returns:
         List[Dict[str, Any]]: 슬랙 블록 메시지 포맷
     """
+    date_str = datetime.now().strftime("%Y-%m-%d")
     blocks = [
         {
             "type": "header",
             "text": {
                 "type": "plain_text",
-                "text": "🔥 AI타임스 뉴스 브리핑",
+                "text": f"🔥 AI타임스 뉴스 브리핑 ({date_str})",
                 "emoji": True
             }
         },
