@@ -7,12 +7,13 @@ def create_slack_blocks(models: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """
     Create formatted Slack blocks for the trending models.
     """
+    date_str = datetime.now().strftime("%Y-%m-%d")
     blocks = [
         {
             "type": "header",
             "text": {
                 "type": "plain_text",
-                "text": "🤗 Hugging Face Trending Models 순위 " + datetime.now().strftime("%Y-%m-%d"),
+                "text": f"🤗 Hugging Face Trending 순위 ({date_str})",
                 "emoji": True
             }
         },
