@@ -2,7 +2,6 @@ from typing import List, Dict, Any
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 from datetime import datetime
-from credentials import SLACK_TOKEN, SLACK_CHANNEL
 
 def create_new_blocks(articles: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """
