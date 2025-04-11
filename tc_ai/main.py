@@ -12,65 +12,28 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-def process_articles() -> List[Dict[str, Any]]:
+def process_articles():
     """
-    Process articles through the pipeline:
+    Main function to run the TechCrunch AI news pipeline:
     1. Get recent articles
     2. Generate summaries
-    3. Return processed articles
+    3. Send to Slack
     """
-    # Get recent articles
-    logger.info("Fetching TechCrunch AI articles...")
     articles = get_techcrunch_ai_articles()
     recent_articles = filter_recent_articles(articles)
     
     if not recent_articles:
-        logger.info("No recent articles found")
-        return []
+        logger.info("No articles to send to Slack")
+        return
     
-    logger.info(f"Found {len(recent_articles)} recent articles")
-    
-    # Process each article through Gemini
     processed_articles = []
     for article in recent_articles:
-        logger.info(f"Generating summary for article: {article['title']}")
-        try:
-            summary_result = summarizer(article['link'])
-            if summary_result:
-                processed_articles.append(summary_result)
-            else:
-                logger.warning(f"Failed to generate summary for article: {article['title']}")
-        except Exception as e:
-            logger.error(f"Error processing article {article['title']}: {str(e)}")
-    
-    return processed_articles
+        summary_result = summarizer(article['link'])
+        if summary_result:
+            processed_articles.append(summary_result)
 
-def main():
-    """
-    Main function to run the TechCrunch AI news pipeline
-    """
-    try:
-        # Process articles
-        processed_articles = process_articles()
-        
-        if not processed_articles:
-            logger.info("No articles to send to Slack")
-            return
-        
-        # Create and send Slack message
-        logger.info("Creating Slack message blocks...")
-        blocks = create_new_blocks(processed_articles)
-        
-        logger.info("Sending to Slack...")
-        success = send_to_slack(blocks, SLACK_TOKEN, SLACK_CHANNEL)
-        
-        if success:
-            logger.info("Successfully sent message to Slack")
-        else:
-            logger.error("Failed to send message to Slack")
-            
-    except Exception as e:
-        logger.error(f"Error in main process: {str(e)}")
+    blocks = create_new_blocks(processed_articles)
+    send_to_slack(blocks, SLACK_TOKEN, SLACK_CHANNEL)
 
 if __name__ == "__main__":
-    main()
+    process_articles()
