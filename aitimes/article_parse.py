@@ -30,13 +30,6 @@ def extract_article_paragraphs(url):
         print(f"Fetching content from: {url}")
         response = requests.get(url, headers=headers, timeout=10) # Timeout in seconds
 
-        # Raise an exception if the request returned an error status code (like 404 or 500)
-        response.raise_for_status()
-        print("Successfully fetched content.")
-
-        # Use the correct encoding if specified, otherwise requests tries to guess
-        response.encoding = response.apparent_encoding
-
         # Parse the HTML content using BeautifulSoup
         soup = BeautifulSoup(response.text, 'html.parser')
 
@@ -67,6 +60,7 @@ def extract_article_paragraphs(url):
 def split_article_content(paragraphs: List[str]) -> Tuple[List[str], List[str]]:
     """
     기사 내용을 소개 부분과 주요 뉴스 부분으로 나눕니다.
+    첫 번째 ■ 문자를 기준으로 구분합니다.
     
     Args:
         paragraphs (List[str]): extract_article_paragraphs 함수의 결과물
@@ -79,42 +73,34 @@ def split_article_content(paragraphs: List[str]) -> Tuple[List[str], List[str]]:
     
     intro_parts = []
     news_parts = []
-    found_separator = False
     found_first_bullet = False
     
-    # 구분자 패턴 정의
-    separator_pattern = re.compile(r"이어\s+[\w\s]+\s*주요\s*뉴스입니다")
-    email_pattern = re.compile(r"AI타임스\s+news@aitimes\.com")
     bullet_pattern = re.compile(r"^■")
+    email_pattern = re.compile(r"AI타임스\s+news@aitimes\.com")
     
     for para in paragraphs:
         # 이메일 문구는 건너뛰기
         if email_pattern.search(para):
             continue
             
-        # 구분자를 찾은 경우
-        if not found_separator and separator_pattern.search(para):
-            found_separator = True
-            continue
-            
-        # 구분자 이후 첫 번째 ■를 찾은 경우
-        if found_separator and not found_first_bullet and bullet_pattern.search(para):
+        # 첫 번째 ■를 찾은 경우
+        if not found_first_bullet and bullet_pattern.search(para):
             found_first_bullet = True
             news_parts.append(para)
             continue
             
-        # 구분자 이전 내용은 intro_parts에
-        if not found_separator:
+        # 첫 번째 ■ 이전 내용은 intro_parts에
+        if not found_first_bullet:
             intro_parts.append(para)
         # 첫 번째 ■ 이후 내용은 news_parts에
-        elif found_first_bullet:
+        else:
             news_parts.append(para)
     
     return intro_parts, news_parts
 
 if __name__ == "__main__":
     # --- Example Usage ---
-    target_url = "https://www.aitimes.com/news/articleView.html?idxno=169217"
+    target_url = "https://www.aitimes.com/news/articleView.html?idxno=169645"
     
     # 기사 전체 내용 가져오기
     paragraphs = extract_article_paragraphs(target_url)
@@ -123,7 +109,7 @@ if __name__ == "__main__":
         if paragraphs:
             # 기사 내용 분리
             intro, news = split_article_content(paragraphs)
-            
+
             print("\n=== 기사 소개 ===")
             for para in intro:
                 print(f"{para}\n")
