@@ -71,16 +71,13 @@ def summarizer(url):
     contents = contents,
     config = generate_content_config,
   )
-  
-  try:
+
     # First parse the outer response object
-    outer_json = json.loads(response.text)
-    # Then parse the inner JSON string from the "response" field
-    inner_json = json.loads(outer_json["response"])[0]
-    return inner_json
-  except json.JSONDecodeError as e:
-    print(f"Error parsing JSON response: {e}")
-    return None
+  outer_json = json.loads(response.text)
+  # Then parse the inner JSON string from the "response" field
+  parsed = json.loads(outer_json["response"])
+  inner_json = parsed[0] if isinstance(parsed, list) else parsed
+  return inner_json
 
 if __name__ == "__main__":
   url = "https://techcrunch.com/2025/04/04/chatgpt-adoption-skyrockets-in-india-but-monetization-may-be-trailing/"
