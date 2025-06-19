@@ -1,8 +1,9 @@
 from huggingface_api import get_top_trending_models
 from slack_sender import create_slack_blocks, send_to_slack
 from credentials import SLACK_TOKEN, SLACK_CHANNEL
+import functions_framework
 
-def main(limit: int):
+def send_trending_models_to_slack(limit: int):
     """
     Main function to fetch trending models and send them to Slack.
     
@@ -22,6 +23,7 @@ def main(limit: int):
     else:
         print("Failed to send message to Slack")
 
-if __name__ == "__main__":
-    # You can change this number to get more or fewer trending models
-    main(limit=5)  # Example: Get top 10 trending models
+# Triggered from a message on a Cloud Pub/Sub topic.
+@functions_framework.cloud_event
+def main(event):
+    send_trending_models_to_slack(limit=5)
