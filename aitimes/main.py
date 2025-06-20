@@ -1,3 +1,4 @@
+import functions_framework
 import logging
 from news_briefing import get_latest_briefing_url
 from article_parse import extract_article_paragraphs, split_article_content
@@ -35,17 +36,6 @@ def fetch_and_print_latest_article():
         intro_text = ' '.join(intro)  # 문단들을 하나의 텍스트로 합치기
         summary = summarize_text(intro_text)
         
-        # 콘솔에 출력
-        print("\n=== 브리핑 소개 요약 ===")
-        print("-" * 50)
-        print(f"{summary}\n")
-            
-        print("\n=== 주요 뉴스 ===")
-        print("-" * 50)
-        for para in news:
-            print(f"{para}\n")
-        print("-" * 50)
-        
         # 슬랙으로 전송
         blocks = create_news_blocks(summary, news, article_url)
         if send_to_slack(SLACK_TOKEN, SLACK_CHANNEL, blocks):
@@ -55,5 +45,6 @@ def fetch_and_print_latest_article():
     else:
         logger.error("Failed to parse the article content")
 
-if __name__ == "__main__":
+@functions_framework.cloud_event
+def main(event):
     fetch_and_print_latest_article()

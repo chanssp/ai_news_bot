@@ -38,4 +38,4 @@ ENV/
 .DS_Store 
 
 # et cetera
-*.prompt.txt
+*/prompt.txt
