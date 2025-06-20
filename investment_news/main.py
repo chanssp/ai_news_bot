@@ -1,9 +1,12 @@
+import functions_framework
 from datetime import datetime
 from investment_list import get_investment_data, get_weekly_investments
 from slack_sender import build_slack_block, send_to_slack
 from credentials import SLACK_TOKEN, SLACK_CHANNEL
 
-def main():
+# Triggered from a message on a Cloud Pub/Sub topic.
+@functions_framework.cloud_event
+def main(event):
     """
     Main function to get weekly investments and send to Slack
     """
@@ -28,6 +31,3 @@ def main():
             
     except Exception as e:
         print(f"Error in main process: {e}")
-
-if __name__ == "__main__":
-    main()
