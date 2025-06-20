@@ -1,3 +1,4 @@
+import functions_framework
 from articles_list import get_techcrunch_ai_articles, filter_recent_articles
 from gemini_summ import summarizer
 from slack_sender import create_new_blocks, send_to_slack
@@ -35,5 +36,7 @@ def process_articles():
     blocks = create_new_blocks(processed_articles)
     send_to_slack(blocks, SLACK_TOKEN, SLACK_CHANNEL)
 
-if __name__ == "__main__":
+# Triggered from a message on a Cloud Pub/Sub topic.
+@functions_framework.cloud_event
+def main(event):
     process_articles()
